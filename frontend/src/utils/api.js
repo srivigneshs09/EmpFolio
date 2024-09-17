@@ -2,21 +2,19 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
-// Function to check if a user exists
 export const userExists = async (uid) => {
   try {
     const response = await axios.get(`${API_URL}/users/${encodeURIComponent(uid)}`);
-    return response.status === 200; // User exists
+    return response.status === 200; 
   } catch (error) {
     if (error.response && error.response.status === 404) {
-      return false; // User does not exist
+      return false; 
     }
     console.error('Error checking user existence: ', error);
-    throw error; // Other errors
+    throw error;
   }
 };
 
-// Function to save user to backend
 export const saveUserToBackend = async (user) => {
   try {
     const userExistsInDb = await userExists(user.sub);
@@ -34,11 +32,10 @@ export const saveUserToBackend = async (user) => {
     console.log('User saved successfully');
   } catch (error) {
     console.error('Error saving user: ', error.response ? error.response.data : error.message);
-    throw error;  // Re-throw the error if you want to handle it elsewhere
+    throw error;
   }
 };
 
-// Function to save user details based on user type
 export const saveUserDetails = async (uid, userType, details) => {
   try {
     await axios.post(`${API_URL}/users/${encodeURIComponent(uid)}/userdetails`, {
@@ -52,19 +49,18 @@ export const saveUserDetails = async (uid, userType, details) => {
   }
 };
 
-// Function to fetch user details
 export const getUser = async (uid) => {
   try {
     const response = await axios.get(`${API_URL}/users/${encodeURIComponent(uid)}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user: ', error);
-    throw error; // Re-throw the error to handle it in the calling code
+    throw error;
   }
 };
 
 export const getUserDetails = async (uid) => {
-  console.log('Fetching details for UID:', uid); // Verify UID
+  console.log('Fetching details for UID:', uid);
   try {
     const response = await axios.get(`${API_URL}/users/${encodeURIComponent(uid)}/userdetails`);
     return response.data;
@@ -75,7 +71,7 @@ export const getUserDetails = async (uid) => {
 };
 
 export const getUserResume = async (uid) => {
-  console.log('Fetching details for UID:', uid); // Verify UID
+  console.log('Fetching details for UID:', uid);
   try {
     const response = await axios.get(`${API_URL}/users/${encodeURIComponent(uid)}`);
     return response.data;

@@ -1,6 +1,6 @@
 // src/utils/firestore.js
 import { collection, addDoc, doc, updateDoc, arrayUnion, getDoc, query, where, getDocs, setDoc } from 'firebase/firestore';
-import { db } from '../components/firebase'; // Import the initialized Firestore instance
+import { db } from '../components/firebase'; 
 
 export const getUserDetails = async (uid) => {
   try {
@@ -15,14 +15,13 @@ export const getUserDetails = async (uid) => {
 
 export const addJobToCollection = async (jobData) => {
   const jobRef = await addDoc(collection(db, 'jobs'), jobData);
-  return jobRef.id; // Return the ID of the newly created job
+  return jobRef.id;
 };
 
-// Function to add the job ID to the user's document under an array named "jobs"
 export const addJobToUser = async (uid, jobId) => {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, {
-      jobs: arrayUnion(jobId) // Add the job ID to the jobs array
+      jobs: arrayUnion(jobId)
   });
 };
 
@@ -39,7 +38,7 @@ export const getJobsByUser = async (uid) => {
 export const addApplicationToCollection = async (applicationData) => {
   try {
     const applicationRef = await addDoc(collection(db, 'applications'), applicationData);
-    return applicationRef.id; // Return the ID of the newly created application
+    return applicationRef.id;
   } catch (error) {
     console.error("Error adding application to collection: ", error);
     return null;
@@ -50,7 +49,7 @@ export const addApplicationToUser = async (uid, applicationId) => {
   try {
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, {
-      applications: arrayUnion(applicationId) // Add the application ID to the applications array
+      applications: arrayUnion(applicationId)
     });
   } catch (error) {
     console.error("Error adding application to user: ", error);
@@ -61,7 +60,7 @@ export const addApplicationToJob = async (jobId, applicationId) => {
   try {
     const jobRef = doc(db, 'jobs', jobId);
     await updateDoc(jobRef, {
-      applications: arrayUnion(applicationId) // Add the application ID to the applications array
+      applications: arrayUnion(applicationId)
     });
   } catch (error) {
     console.error("Error adding application to job: ", error);
@@ -83,7 +82,6 @@ export const getApplicationsByUser = async (uid) => {
   }
 };
 
-// In src/utils/firestore.js
 
 export const getApplicationsByJob = async (jobId) => {
   try {
@@ -111,26 +109,17 @@ export const getApplicationsByJob = async (jobId) => {
 
 export const saveFilePathToFirestore = async (userId, fileUrl) => {
   try {
-    // Reference to the user's document
     const userRef = doc(db, 'users', userId);
-
-    // Fetch the current user document
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
       throw new Error('User document does not exist.');
     }
-
-    // Get the existing user details
     const userData = userDoc.data();
     const userDetails = userData.userDetails || [];
-
-    // Update the resume URL in the userDetails array
     const updatedUserDetails = userDetails.map(detail => ({
       ...detail,
       resume: fileUrl
     }));
-
-    // Save the updated userDetails back to Firestore
     await setDoc(userRef, { userDetails: updatedUserDetails }, { merge: true });
 
     console.log('File path saved successfully to Firestore.');
